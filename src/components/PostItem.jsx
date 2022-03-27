@@ -1,5 +1,5 @@
 import React from "react";
-
+import styl from "./UI/Button/Buton.module.css";
 const PostItem = function (props) {
   return (
     <div className="post">
@@ -12,7 +12,7 @@ const PostItem = function (props) {
         <div> {props.post.body}</div>{" "}
       </div>{" "}
       <div className="post__btns">
-        <button> Deleate </button>{" "}
+        <button className={styl.button}> Deleate </button>{" "}
       </div>{" "}
     </div>
   );
