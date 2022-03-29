@@ -1,14 +1,10 @@
 import React, {
   useState
 } from 'react';
-import Counter from './components/counter';
-import CounterClass from './components/counterclass'
 import './styles/App.css'
-import PostItem from './components/PostItem';
 import PostList from './components/PostList';
-import Buton from './components/UI/Button/Buton';
-import Input from './components/UI/Input/Inputt';
 import Form from './components/UI/form/form';
+import Selection from './components/UI/Selection/Selection';
 const App = () => {
   const [posts, Setposts] = useState([{
       id: 1,
@@ -35,9 +31,17 @@ const App = () => {
     Setposts(posts.filter(item=>item.id!=id))
   }
 
+  const [itemSort,ConditonSort] = useState()
+
+  const Sort = (sort) =>{
+    console.log(itemSort)
+    ConditonSort(sort)
+  }
+
   return ( 
     <div> 
       <Form addFunct={addNewPost}/>
+      <Selection Name='Сортировка' condition={[{name:'Название',value:'title'},{name:'Описанию',value:'body'}]} value={itemSort} onChange={Sort} />
       {posts.length!=0?< PostList posts = {posts} title = "JSS" del={DeleteItem} />:<h1 style={{ textAlign: "center" }}>Посты не найдены</h1>}
     </div >
 
