@@ -8,6 +8,7 @@ import PostItem from './components/PostItem';
 import PostList from './components/PostList';
 import Buton from './components/UI/Button/Buton';
 import Input from './components/UI/Input/Inputt';
+import Form from './components/UI/form/form';
 const App = () => {
   const [posts, Setposts] = useState([{
       id: 1,
@@ -26,22 +27,18 @@ const App = () => {
     }
   ])
 
-  const [post,AddNewPostName] = useState({body:'',title:''})
+  const addNewPost = (PropObj) =>{
+      Setposts([...posts,{...PropObj, id:Date.now()}])
+  }
 
-  const addNewPost = (e) =>{
-      e.preventDefault();
-      Setposts([...posts,{...post, id:Date.now()}])
-      AddNewPostName({body:'',title:''})
+  const DeleteItem = (id) =>{
+    Setposts(posts.filter(item=>item.id!=id))
   }
 
   return ( 
     <div> 
-      <form>
-        <Input value={post.title} type="text" Placeholder="Название поста" onChange={e => AddNewPostName({...post,title: e.target.value})}/>
-        <Input value={post.body} type="text" Placeholder="Описание поста" onChange={e => AddNewPostName({...post,body:e.target.value})}/>
-        <Buton onClick={addNewPost}>Создать</Buton>
-      </form>
-      < PostList posts = {posts} title = "JSS" />
+      <Form addFunct={addNewPost}/>
+      {posts.length!=0?< PostList posts = {posts} title = "JSS" del={DeleteItem} />:<h1 style={{ textAlign: "center" }}>Посты не найдены</h1>}
     </div >
 
   );

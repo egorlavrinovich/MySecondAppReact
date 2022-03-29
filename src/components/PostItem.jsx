@@ -12,7 +12,13 @@ const PostItem = function (props) {
         <div> {props.post.body}</div>{" "}
       </div>{" "}
       <div className="post__btns">
-        <button className={styl.button}> Deleate </button>{" "}
+        <button
+          className={styl.button}
+          onClick={() => props.del(props.post.id)}
+        >
+          {" "}
+          Deleate{" "}
+        </button>{" "}
       </div>{" "}
     </div>
   );
