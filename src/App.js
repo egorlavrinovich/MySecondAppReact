@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Items from './components/Items';
 import Form from './components/UI/Form/Form';
 import Spisok from './components/UI/Spisok/Spisok';
@@ -7,24 +7,30 @@ import Modal from './components/UI/Modal/modal'
 import Button from './components/UI/Button/Button';
 import './components/css/App.css'
 import { UsePosts } from './components/hooks/UsePosts'
+import axios from 'axios';
+import PostService from './API/PostService';
+import Loder from './components/UI/Loder/Loder';
 
 const App = () => {
-  const [data,setdata] = useState([{
-    id:Date.now(),
-    title:"JS",
-    body:"I try to learn it"
-  }
-])
+const [data,setdata] = useState([])
+const [Poisk,SetPoisk] = useState({SelectedPosts:'',SearchValue:''}) 
+const [ActiveModal,SetModal] = useState(false) // Установка значения модального окна
+const sortedAndSearchedPosts = UsePosts(data,Poisk.SelectedPosts,Poisk.SearchValue) // Наш кастомный хук, отвечающий за сортировку
+const [isPostLoading, setIsPostLoading] = useState(false)
 
-const [Poisk,SetPoisk] = useState({SelectedPosts:'',SearchValue:''}) // Наш кастомный хук
+async function fetchPosts(){ // Подгрузка базы данных
+  setIsPostLoading(true)
+  setTimeout(async()=>{
+    const posts = await PostService.getAll()
+    setdata(posts)
+    setIsPostLoading(false)
+  },1000)
+}
 
-// Установка значения модального окна
+useEffect(()=>{ // Следим за перевым рендером компонента и выполняем нашу ф-цию
+  fetchPosts()
+ },[])
 
-const [ActiveModal,SetModal] = useState(false)
-
-const sortedAndSearchedPosts = UsePosts(data,Poisk.SelectedPosts,Poisk.SearchValue)
-
-// Конец поиска по элементу
 
 function onDeleate(id) {
   const index = (data.indexOf(data[id]))
@@ -41,9 +47,11 @@ function add(NewItem) {
       <Modal Visible={ActiveModal} SetActive={SetModal}> <Form CreateItem={add} /></Modal>
       <Spisok fields={[{name:'Название',title:'title'},{name:'Описанию',title:'body'}]} ChoosePoint={SetPoisk} ValueofPoisk={Poisk} />
       <Search Apply={SetPoisk} value={Poisk}/>
-      {
-        sortedAndSearchedPosts.length? <Items data={sortedAndSearchedPosts} onDeleate={onDeleate}/>:<h1 style={{textAlign:'center',color:'gray'}}>Posts Undefined</h1>
+      {isPostLoading
+      ? <div style={{display:'flex',justifyContent:'center',marginTop:30}}><Loder/></div>
+      : <Items data={sortedAndSearchedPosts} onDeleate={onDeleate}/>
       }
+      { sortedAndSearchedPosts.length? <Items data={sortedAndSearchedPosts} onDeleate={onDeleate}/>:<h1 style={{textAlign:'center',color:'gray'}}>Posts Undefined</h1>}
     </div>
   );
 };
